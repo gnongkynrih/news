@@ -12,15 +12,18 @@ class _MyProgressIndicatorState extends State<MyProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(
-            color: widget.color,
-          ),
-          const SizedBox(width: 10),
-          Text(widget.title),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(
+              color: widget.color,
+            ),
+            const SizedBox(width: 10),
+            Text(widget.title),
+          ],
+        ),
       ),
     );
   }
