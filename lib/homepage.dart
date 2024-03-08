@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:news/model/headlines.dart';
+import 'package:news/provider/news_provider.dart';
 import 'package:news/util/api_helper.dart';
+import 'package:news/widget/category_list.dart';
 import 'package:news/widget/news_card.dart';
 import 'package:news/widget/progress_indicator.dart';
+import 'package:news/widget/vertical_list_card.dart';
+import 'package:provider/provider.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -23,15 +27,18 @@ class _HomePageScreenState extends State<HomePageScreen> {
     var data = await ApiHelper.get(url);
 
     for (var article in data['articles']) {
-      headlines.add(Headlines(
-          content: data['content'],
+      headlines.add(
+        Headlines(
+          content: article['content'] ?? '',
           author: article['author'] ??
               '', //if author is null then assign empty string
           title: article['title'] ?? '',
           urlToImage: article['urlToImage'],
           publishedAt: DateTime.parse(
             article['publishedAt'],
-          )));
+          ),
+        ),
+      );
     }
     setState(() {
       isLoading = false;
@@ -41,6 +48,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   void initState() {
     getNews();
+
     super.initState();
   }
 
@@ -62,6 +70,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 title: "Loading data... Please wait",
               ))
             : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const CategoryListWidget(),
+                const SizedBox(
+                  height: 15,
+                ),
                 const Text(
                   'HEADLINES',
                   style: TextStyle(
@@ -86,6 +98,16 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 ),
                 const SizedBox(
                   height: 20,
+                ),
+                SizedBox(
+                  height: 500,
+                  child: ListView.builder(
+                      itemCount: headlines.length,
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return VerticalListCard(headline: headlines[index]);
+                      }),
                 ),
               ]),
       ),
