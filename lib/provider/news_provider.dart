@@ -3,6 +3,7 @@ import 'package:news/model/headlines.dart';
 
 class NewsProvider with ChangeNotifier {
   late Headlines headline;
+  List<Headlines> bookmarkList = [];
   List<String> categories = [
     'Business',
     'Entertainment',
@@ -21,6 +22,11 @@ class NewsProvider with ChangeNotifier {
 
   void setCategory(String cat) {
     category = cat;
+    notifyListeners();
+  }
+
+  void addBookmark(Headlines news) {
+    bookmarkList.add(news);
     notifyListeners();
   }
 }

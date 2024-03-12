@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news/model/headlines.dart';
 import 'package:news/provider/news_provider.dart';
 import 'package:news/util/api_helper.dart';
+import 'package:news/widget/list_of_news.dart';
 import 'package:news/widget/progress_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -22,18 +23,7 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
 
     var data = await ApiHelper.get(url);
     for (var article in data['articles']) {
-      headlines.add(
-        Headlines(
-          content: article['content'] ?? '',
-          author: article['author'] ??
-              '', //if author is null then assign empty string
-          title: article['title'] ?? '',
-          urlToImage: article['urlToImage'],
-          publishedAt: DateTime.parse(
-            article['publishedAt'],
-          ),
-        ),
-      );
+      headlines.add(Headlines.fromJSON(article));
     }
     setState(() {
       isLoading = false;
@@ -71,47 +61,7 @@ class _CategoryNewsScreenState extends State<CategoryNewsScreen> {
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height - 100,
-                    child: ListView.builder(
-                      itemCount: headlines.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Provider.of<NewsProvider>(context, listen: false)
-                                .setHeadline(headlines[index]);
-                            Navigator.pushNamed(context, 'detailnews');
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 10, left: 10, right: 10),
-                            child: ListTile(
-                              leading: SizedBox(
-                                width: 100,
-                                child: Image.network(
-                                  headlines[index].urlToImage!,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Image.asset(
-                                    'images/noimage.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              title: Text(
-                                headlines[index].title,
-                              ),
-                              subtitle: Text(
-                                'By ${headlines[index].author}',
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  ListOfNews(headlines: headlines),
                 ],
               ),
             ),

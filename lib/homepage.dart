@@ -5,6 +5,7 @@ import 'package:news/model/headlines.dart';
 import 'package:news/provider/news_provider.dart';
 import 'package:news/util/api_helper.dart';
 import 'package:news/widget/category_list.dart';
+import 'package:news/widget/my_drawer.dart';
 import 'package:news/widget/news_card.dart';
 import 'package:news/widget/progress_indicator.dart';
 import 'package:news/widget/vertical_list_card.dart';
@@ -27,18 +28,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     var data = await ApiHelper.get(url);
 
     for (var article in data['articles']) {
-      headlines.add(
-        Headlines(
-          content: article['content'] ?? '',
-          author: article['author'] ??
-              '', //if author is null then assign empty string
-          title: article['title'] ?? '',
-          urlToImage: article['urlToImage'],
-          publishedAt: DateTime.parse(
-            article['publishedAt'],
-          ),
-        ),
-      );
+      headlines.add(Headlines.fromJSON(article));
     }
     setState(() {
       isLoading = false;
@@ -55,6 +45,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MyDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.purple,
         title: const Text(

@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:news/bookmark_news.dart';
 import 'package:news/detail_page.dart';
 import 'package:news/homepage.dart';
 import 'package:news/provider/news_provider.dart';
 import 'package:news/search.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiProvider(
       providers: [
@@ -54,40 +62,11 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
           controller: tabController,
           children: const [
             HomePageScreen(),
-            HomePageScreen(),
+            BookmarkScreen(),
             SearchScreen(),
             HomePageScreen(),
           ],
         ),
-        // bottomNavigationBar: BottomNavigationBar(
-        //   backgroundColor: Colors.purple,
-        //   currentIndex: _currentIndex,
-        //   onTap: (tabIndex) {
-        //     setState(() => _currentIndex = tabIndex);
-        //     tabController.animateTo(_currentIndex);
-        //   },
-        //   items: const [
-        //     BottomNavigationBarItem(
-        //       icon: Icon(
-        //         Icons.home,
-        //         color: Colors.purple,
-        //       ),
-        //       label: 'Home',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.favorite_border),
-        //       label: 'Likes',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.search),
-        //       label: 'Search',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.person),
-        //       label: 'Profile',
-        //     ),
-        //   ],
-        // )
         bottomNavigationBar: SalomonBottomBar(
           backgroundColor: Colors.grey.shade200,
           currentIndex: _currentIndex,
@@ -105,8 +84,8 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
 
             /// Likes
             SalomonBottomBarItem(
-              icon: const Icon(Icons.favorite_border),
-              title: const Text("Likes"),
+              icon: const Icon(Icons.bookmark_border),
+              title: const Text("Bookmark"),
               selectedColor: Colors.pink,
             ),
 
