@@ -27,20 +27,19 @@ class _NewsCardState extends State<NewsCard> {
             SizedBox(
               height: 150,
               width: MediaQuery.of(context).size.width - 100,
-              child: widget.headline.urlToImage == null
-                  ? Image.asset('images/noimage.png')
-                  : Image.network(
-                      widget.headline.urlToImage!,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Image.asset('images/noimage.png'),
-                      fit: BoxFit.fill,
-                    ),
+              child: Image.network(
+                widget.headline.urlToImage!,
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  'images/noimage.png',
+                ),
+                fit: BoxFit.fill,
+              ),
             ),
             Positioned(
               bottom: 0,
               child: Container(
                 width: MediaQuery.of(context).size.width - 100,
-                color: Colors.black.withOpacity(.7),
+                color: Colors.black.withOpacity(.4),
                 height: 60,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

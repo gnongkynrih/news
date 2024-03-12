@@ -75,7 +75,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: SizedBox(
-                    height: 200,
+                    height: 150,
                     child: ListView.builder(
                       physics: const ClampingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
@@ -91,7 +91,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   height: 20,
                 ),
                 SizedBox(
-                  height: 500,
+                  height: 400,
                   child: ListView.builder(
                       itemCount: headlines.length,
                       shrinkWrap: true,
