@@ -1,7 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:news/model/headlines.dart';
+import 'package:news/provider/news_provider.dart';
+import 'package:news/widget/list_of_news.dart';
+import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -12,12 +13,15 @@ class BookmarkScreen extends StatefulWidget {
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
   String isloading = 'load';
-
+  List<Headlines> bookmarkList = [];
   getBookmarkNews() async {
-    // get bookmarked news from shared preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? data = prefs.getString('bookmark');
-    if (data == null) {
+    var provider = Provider.of<NewsProvider>(context, listen: false);
+
+    for (var article in provider.listNews) {
+      bookmarkList.add(Headlines.fromJSON(article));
+    }
+
+    if (bookmarkList.isEmpty) {
       // if no news is bookmarked
       setState(() {
         isloading = 'no-record';
@@ -26,10 +30,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     }
     setState(() {
       isloading = 'stop';
-    });
-    Map<String, dynamic> news = jsonDecode(data);
-    news.forEach((key, value) {
-      print(key);
     });
   }
 
@@ -62,7 +62,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           child: Text('No bookmark news yet'),
         );
       default:
-        return const Text('Bookmark news here');
+        return ListOfNews(headlines: bookmarkList);
     }
   }
 }

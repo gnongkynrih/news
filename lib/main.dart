@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:news/bookmark_news.dart';
 import 'package:news/detail_page.dart';
 import 'package:news/homepage.dart';
@@ -7,8 +10,11 @@ import 'package:news/provider/news_provider.dart';
 import 'package:news/search.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await dotenv.load(fileName: ".env");
 
   runApp(
@@ -35,10 +41,23 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
   int _currentIndex =
       0; //store which menu you selected from bottom navigation bar
 
+  void readBookMarkData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String? jsonData = pref.getString('bookmark');
+    if (jsonData != null) {
+      List<dynamic> data = jsonDecode(jsonData);
+      for (Map<String, dynamic> article in data) {
+        Provider.of<NewsProvider>(context, listen: false).listNews.add(article);
+      }
+    }
+    FlutterNativeSplash.remove();
+  }
+
   @override
   void initState() {
     tabController =
-        TabController(length: 4, vsync: this, initialIndex: _currentIndex);
+        TabController(length: 3, vsync: this, initialIndex: _currentIndex);
+    readBookMarkData();
     super.initState();
   }
 
@@ -59,7 +78,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
             HomePageScreen(),
             BookmarkScreen(),
             SearchScreen(),
-            HomePageScreen(),
+            // HomePageScreen(),
           ],
         ),
         bottomNavigationBar: SalomonBottomBar(
@@ -92,11 +111,11 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
             ),
 
             /// Profile
-            SalomonBottomBarItem(
-              icon: const Icon(Icons.person),
-              title: const Text("Profile"),
-              selectedColor: Colors.teal,
-            ),
+            // SalomonBottomBarItem(
+            //   icon: const Icon(Icons.person),
+            //   title: const Text("Profile"),
+            //   selectedColor: Colors.teal,
+            // ),
           ],
         ),
       ),

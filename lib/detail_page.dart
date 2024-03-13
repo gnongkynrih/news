@@ -17,24 +17,25 @@ class _DetailPageScreenState extends State<DetailPageScreen> {
   late Headlines news;
   bool isLoading = true;
   bool isBookmarked = false;
-  List<Map<String, dynamic>> listNews = [];
+
   late SharedPreferences prefs;
   initialize() async {
-    news = Provider.of<NewsProvider>(context, listen: false).headline;
-    prefs = await SharedPreferences.getInstance();
-    String? jsonData = prefs.getString('bookmark');
+    var provider = Provider.of<NewsProvider>(context, listen: false);
+    news = provider.headline;
 
-    if (jsonData != null) {
-      List<dynamic> data = jsonDecode(jsonData);
-      for (Map<String, dynamic> element in data) {
-        listNews.add(element);
-        if (element['title'] == news.title) {
-          setState(() {
-            isBookmarked = true;
-          });
-        }
+    prefs = await SharedPreferences.getInstance();
+
+    //check if the news is bookmarked, if so then highlight the bookmark icon
+    for (Map<String, dynamic> article in provider.listNews) {
+      if (article['title'] == news.title) {
+        setState(() {
+          isBookmarked = true;
+          isLoading = false;
+        });
+        return;
       }
     }
+
     setState(() {
       isLoading = false;
     });
@@ -113,15 +114,9 @@ class _DetailPageScreenState extends State<DetailPageScreen> {
                                 IconButton(
                                   onPressed: () {
                                     if (isBookmarked == false) {
-                                      bookMarkNews();
+                                      addBookMark();
                                     } else {
-                                      listNews.removeWhere((element) =>
-                                          element['title'] == news.title);
-                                      prefs.setString(
-                                          'bookmark', jsonEncode(listNews));
-                                      setState(() {
-                                        isBookmarked = false;
-                                      });
+                                      removeBookMark();
                                     }
                                   },
                                   icon: Icon(
@@ -157,7 +152,17 @@ class _DetailPageScreenState extends State<DetailPageScreen> {
     );
   }
 
-  void bookMarkNews() async {
+  void removeBookMark() {
+    var provider = Provider.of<NewsProvider>(context, listen: false);
+    provider.listNews.removeWhere((element) => element['title'] == news.title);
+    prefs.setString('bookmark', jsonEncode(provider.listNews));
+    setState(() {
+      isBookmarked = false;
+    });
+  }
+
+  void addBookMark() async {
+    var provider = Provider.of<NewsProvider>(context, listen: false);
     try {
       var jsonNews = {
         'author': news.author,
@@ -166,8 +171,8 @@ class _DetailPageScreenState extends State<DetailPageScreen> {
         'content': news.content,
         'publishedAt': news.publishedAt.toString(),
       };
-      listNews.add(jsonNews);
-      await prefs.setString('bookmark', jsonEncode(listNews));
+      provider.listNews.add(jsonNews);
+      await prefs.setString('bookmark', jsonEncode(provider.listNews));
       setState(() {
         isBookmarked = true;
       });

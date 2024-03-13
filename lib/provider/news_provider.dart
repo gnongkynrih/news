@@ -4,6 +4,8 @@ import 'package:news/model/headlines.dart';
 class NewsProvider with ChangeNotifier {
   late Headlines headline;
   List<Headlines> bookmarkList = [];
+  List<Map<String, dynamic>> listNews = [];
+
   List<String> categories = [
     'Business',
     'Entertainment',

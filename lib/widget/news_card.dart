@@ -27,13 +27,15 @@ class _NewsCardState extends State<NewsCard> {
             SizedBox(
               height: 150,
               width: MediaQuery.of(context).size.width - 100,
-              child: Image.network(
-                widget.headline.urlToImage!,
-                errorBuilder: (context, error, stackTrace) => Image.asset(
-                  'images/noimage.png',
-                ),
-                fit: BoxFit.fill,
-              ),
+              child: widget.headline.urlToImage == null
+                  ? Image.asset('images/noimage.png')
+                  : Image.network(
+                      widget.headline.urlToImage!,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'images/noimage.png',
+                      ),
+                      fit: BoxFit.fill,
+                    ),
             ),
             Positioned(
               bottom: 0,
